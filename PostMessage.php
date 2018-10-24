@@ -32,28 +32,57 @@
         $subject = str_replace("~", "-", $subject);
         $name = str_replace("~", "-", $name);
         $message = str_replace("~", "-", $message);
-        $messageRecord = "$subject~$name~$message\n";
-        //echo $messageRecord; //debug
-        $fileHandle = fopen("messages.txt", "ab");
-        if (!$fileHandle) {
-            //Failure
-            echo "There was an error saving your message!\n";
+        $existingSubjects = array();
+        if (file_exists("messages.txt") && filesize("messages.txt") > 0) {
+            $messageArray = file("messages.txt");
+            $count = count($messageArray);
+            //echo "$count<br>";
+            for ($i = 0; $i < $count; $i++) {
+                $currMsg = explode("~", $messageArray[$i]);
+                //Creating array of just subject fields
+                $existingSubjects[] = $currMsg[0];
+            }
+        }
+        //Designed to test keys, not values
+        //Does this key exist in array?
+        if (in_array($subject, $existingSubjects)) {
+            echo "<p>The subject <em>\"$subject\"</em> you entered already exists!<br>\n";
+            echo "Please enter a new subject and try again.<br>\n";
+            echo "Your message was not saved.</p>";
+            $subject = "";
         }
         else {
-            fwrite($fileHandle, $messageRecord);
-            //Success
-            fclose($fileHandle);
-            echo "Your message has been saved.\n";
-        }
+            $messageRecord = "$subject~$name~$message\n";
+            //echo $messageRecord; //debug
+            $fileHandle = fopen("messages.txt", "ab");
+            if (!$fileHandle) {
+                //Failure
+                echo "There was an error saving your message!\n";
+            }
+            else {
+                fwrite($fileHandle, $messageRecord);
+                //Success
+                fclose($fileHandle);
+                echo "Your message has been saved.\n";
+                $subject = "";
+                $name = "";
+                $message = "";
+            }
+        }       
+    }
+    else {
+        $subject = "";
+        $name = "";
+        $message = "";
     }
     ?>
     <!-- HTML Form (for submission) -->
     <h1>Post New Message</h1>
     <hr>
     <form action="PostMessage.php" method="post">
-        <span style="font-weight: bold">Subject: <input type="text" name="subject"></span>
-        <span style="font-weight: bold">Name: <input type="text" name="name"></span><br>
-        <textarea name="message" rows="6" cols="80" style="margin: 10px 5px 5px"></textarea><br>
+        <span style="font-weight: bold">Subject: <input type="text" name="subject" value="<?php echo $subject;?>"></span>
+        <span style="font-weight: bold">Name: <input type="text" name="name" value="<?php echo $name; ?>"></span><br>
+        <textarea name="message" rows="6" cols="80" style="margin: 10px 5px 5px"><?php echo $message; ?></textarea><br>
         <input type="reset" name="reset" value="Reset Form">
         <input type="submit" name="submit" value="Post Message">
     </form>
