@@ -6,24 +6,24 @@
     <!--   
          Exercise 02_06_01
          Author: Tabitha Siclovan
-         Date: October 19, 2018
+         Date: October 24, 2018
         
-         MessageBoard.php
+         GuestBook.php
     -->
-    <title>Message Board</title>
+    <title>GuestBook</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="initial-scale=1.0">
     <script src="modernizr.custom.65897.js"></script>
 </head>
 
-<body>
-    <h1>Message Board</h1>
+<body style="background-color: rgb(208, 248, 255)">
+    <h1 style="text-align: center">GuestBook Sign-In</h1>
     <?php
     //Find out if got here with data
     if (isset($_GET['action'])) {
-        if (file_exists("messages.txt") && filesize("messages.txt") != 0) {
+        if (file_exists("Guests.txt") && filesize("Guests.txt") != 0) {
         //Error if there are no messages
-            $messageArray = file("messages.txt");
+            $messageArray = file("Guests.txt");
             switch ($_GET['action']) {
                 case 'Delete First':
                     //Dump first element and shrink
@@ -52,7 +52,7 @@
                 //implode message array
                 $newMessages = implode($messageArray);
                 //opens the file in write binary mode
-                $fileHandle = fopen("messages.txt", "wb");
+                $fileHandle = fopen("Guests.txt", "wb");
                 if (!$fileHandle) {
                     //If not get a file handle echos a message
                     echo "There was an error updating the message file.\n";
@@ -64,24 +64,24 @@
                 }
             }
             else {
-                unlink("messages.txt");
+                unlink("Guests.txt");
             }
        }
     }
-    if (!file_exists("messages.txt") || filesize("messages.txt") == 0) {
+    if (!file_exists("Guests.txt") || filesize("Guests.txt") == 0) {
         //Error if there are no messages
-        echo "<p>There are no messages posted</p>\n";
+        echo "<p>There are no guest user sign-ins</p>\n";
     }
     else {
-        $messageArray = file("messages.txt");
+        $messageArray = file("Guests.txt");
         //Table created with built-in styles
-        echo "<table style=\"background-color: lightgray\" border=\"1\" width=\"100%\">\n";
+        echo "<table style=\"background-color: rgb(131, 229, 255)\" border=\"1\" width=\"100%\">\n";
         $count = count($messageArray);
         for ($i = 0; $i < $count; $i++) {
             $currMsg = explode("~", $messageArray[$i]);
             $keyMessageArray[$currMsg[0]] = $currMsg[1] . "~" . $currMsg[2];
         }
-        //Take place of $i
+         //Take place of $i
         $index = 1;
         $key = key($keyMessageArray);
         foreach ($keyMessageArray as $message) {
@@ -90,10 +90,10 @@
             echo "<tr>\n";
             //Table data with styles
             echo "<td width=\"5%\" style=\"text-align: center; font-weight: bold\">" . $index . "</td>\n";
-            echo "<td width=\"85%\"><span style=\"font-weight: bold\">Subject: </span>" . htmlentities($key) . "<br>\n";
-            echo "<span style=\"font-weight: bold\">Name: </span>" . htmlentities($currMsg[0]) . "<br>\n";
-            echo "<span style=\"text-decoration: underline; font-weight: bold\">Messages: </span>" . htmlentities($currMsg[1]) . "<td>\n";
-            echo "<td width=\"10%\" style=\"text-align: center\">" . "<a href='MessageBoard.php?" . "action=Delete%20Message&" . "message=" . ($index - 1) . "'>" . "Delete This Message</a></td>\n";
+            echo "<td width=\"85%\"><span style=\"font-weight: bold\">First Name: </span>" . htmlentities($key) . "<br>\n";
+            echo "<span style=\"font-weight: bold\">Last Name: </span>" . htmlentities($currMsg[0]) . "<br>\n";
+            echo "<span style=\"text-decoration: underline; font-weight: bold\">Email Address: </span>" . htmlentities($currMsg[1]) . "<td>\n";
+            echo "<td width=\"10%\" style=\"text-align: center\">" . "<a href='GuestBook.php?" . "action=Delete%20Message&" . "guest=" . ($index - 1) . "'>" . "Delete This Guest</a></td>\n";
             echo "</tr>\n";
             ++$index;
             next($keyMessageArray);
@@ -102,17 +102,17 @@
         echo "</table>";
     }
     ?>
-        <p>
+        <p> 
             <!-- Hyperlink to form to post messages -->
-            <a href="PostMessage.php">Post New Message</a>
+            <a href="PostGuest.php">Sign In Another User</a>
             <br>
             <!-- ? is a query string -->
             <!-- Hyperlink to delete first message in array -->
-            <a href="MessageBoard.php?action=Sort%20Ascending">Sort Subjects A-Z</a><br>
-            <a href="MessageBoard.php?action=Sort%20Descending">Sort Subjects Z-A</a><br>
-            <a href="MessageBoard.php?action=Delete%20First">Delete First Message</a><br>
+            <a href="GuestBook.php?action=Sort%20Ascending">Sort Names A-Z</a><br>
+            <a href="GuestBook.php?action=Sort%20Descending">Sort Names Z-A</a><br>
+            <a href="GuestBook.php?action=Delete%20First">Delete First Guest</a><br>
             <!-- Hyperlink to delete last message in array -->
-            <a href="MessageBoard.php?action=Delete%20Last">Delete Last Message</a><br>
+            <a href="GuestBook.php?action=Delete%20Last">Delete Last Guest</a><br>
             <!-- Hyperlink to remove message duplicates -->
             <!--<a href="MessageBoard.php?action=Remove%20Duplicates">Remove Duplicates</a>-->
             <br>
