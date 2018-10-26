@@ -28,38 +28,34 @@
         $fname = stripslashes($_POST['fname']);
         $lname = stripslashes($_POST['lname']);
         $email = stripslashes($_POST['email']);
-        //Replaces tildys (~) with dash (-)
-        $fname = str_replace("~", "-", $fname);
-        $lname = str_replace("~", "-", $lname);
-        $email = str_replace("~", "-", $email);
-        $existingSubjects = array();
+        $existingNames = array();
         if (file_exists("Guests.txt") && filesize("Guests.txt") > 0) {
-            $messageArray = file("Guests.txt");
-            $count = count($messageArray);
+            $guestArray = file("Guests.txt");
+            $count = count($guestArray);
             //echo "$count<br>";
             for ($i = 0; $i < $count; $i++) {
-                $currMsg = explode("~", $messageArray[$i]);
+                $currMsg = explode("~", $guestArray[$i]);
                 //Creating array of just subject fields
-                $existingSubjects[] = $currMsg[0];
+                $existingNames[] = $currMsg[0];
             }
         }
         //Designed to test keys, not values
         //Does this key exist in array?
-        if (in_array($fname, $existingSubjects)) {
-            echo "<p>The Name <em>\"$fname\"</em> you entered already exists!<br>\n";
+        if (in_array($fname, $existingNames)) {
+            echo "<p>The Name <em>\"$fname $lname\"</em> you entered already exists!<br>\n";
             echo "Please enter a new Guest Name and try again.<br>\n";
             $fname = "";
         }
         else {
-            $messageRecord = "$fname~$lname~$email\n";
+            $guestNameRecord = "$fname~$lname~$email\n";
             //echo $messageRecord; //debug
             $fileHandle = fopen("Guests.txt", "ab");
             if (!$fileHandle) {
                 //Failure
-                echo "There was an error saving your message!\n";
+                echo "There was an error saving your guest name!\n";
             }
             else {
-                fwrite($fileHandle, $messageRecord);
+                fwrite($fileHandle, $guestNameRecord);
                 //Success
                 fclose($fileHandle);
                 echo "Your message has been saved.\n";

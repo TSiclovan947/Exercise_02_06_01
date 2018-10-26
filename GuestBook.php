@@ -39,7 +39,7 @@
                     rsort($messageArray);
                     break;
                  case 'Delete Message':
-                    array_splice($messageArray, $_GET['message'], 1);
+                    array_splice($messageArray, $_GET['email'], 1);
                     break;
                     case 'Remove Duplicates':
                     $messageArray = array_unique($messageArray);
